@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Text, PermissionsAndroid } from 'react-native'
+import { View, Text, PermissionsAndroid, AsyncStorage } from 'react-native'
 import { Appbar } from 'react-native-paper';
 import Geolocation from 'react-native-geolocation-service';
 import Loc from 'react-native-locationiq';
@@ -65,13 +65,18 @@ export class Home extends Component {
            console.log(address.city,address.state);
            this.setState({city : address.city})
            this.setState({state : address.state})
+           
        })
        .catch(error => console.warn(error));
       });
-      const data = await fetchData()
-      console.log(data)
+      const data = await fetchData(data)
+      var mod = new Object(data)
+      var modState = this.state.state
+      var modCity = this.state.city
+      console.log(city)
+      console.log(mod["data"][modState]["districtData"][modCity])
     };
-    
+
     render() {
         return (
             <View>

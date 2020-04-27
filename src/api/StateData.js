@@ -6,9 +6,9 @@ const url = 'https://api.covid19india.org/state_district_wise.json'
 
 export const fetchData = async ()  =>  {
     try {
-        const {data: { Assam:{districtData:{Cachar}} }} = await axios.get(url)
-        return {Cachar}
+        const {data} = await axios.get(url)
+        return {data}
     } catch (error) {
-        
+    
     }
 }
