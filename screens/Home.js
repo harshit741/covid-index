@@ -16,19 +16,18 @@ const Home = () => {
         <Appbar.Content title="Home" />
       </Appbar.Header>
       <Tab.Navigator tabBarOptions={{
-        activeTintColor: '#04395e',
+        activeTintColor: '#1B445F',
         labelStyle:{
           fontWeight: 'bold',
-          fontFamily: 'Arial',
+          fontFamily: 'sans',
         },
         indicatorStyle:{
           backgroundColor: '#1B445F',
-          height:2
+          height:2,
         }
-
       }}>
-        <Tab.Screen name="Your City" component={Current} />
         <Tab.Screen name="India " component={IndiaStat} />
+        <Tab.Screen name="Your City" component={Current} />
       </Tab.Navigator>
     </NavigationContainer>
   )
