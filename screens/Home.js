@@ -1,111 +1,37 @@
-import React, { Component } from 'react'
-import { View, Text, PermissionsAndroid, AsyncStorage } from 'react-native'
+import React from 'react'
+import { View, Text } from 'react-native'
 import { Appbar } from 'react-native-paper';
-import Geolocation from 'react-native-geolocation-service';
-import Loc from 'react-native-locationiq';
-import { fetchData } from '../src/api/StateData'
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
+import { NavigationContainer } from '@react-navigation/native'
+import Current from './Current';
+import IndiaStat from './IndiaStat'
 
-Loc.init("12137dbd193f40"); //My locationIQ API Key
+const Tab = createMaterialTopTabNavigator();
 
-const locationPermission = async () => {
-  try {
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-      {
-        title: "This app requires your location to work",
+const Home = () => {
+  return (
+    <NavigationContainer independent={true}>
+      <Appbar.Header>
+        <Appbar.Action icon="home" />
+        <Appbar.Content title="Home" />
+      </Appbar.Header>
+      <Tab.Navigator tabBarOptions={{
+        activeTintColor: '#04395e',
+        labelStyle:{
+          fontWeight: 'bold',
+          fontFamily: 'Arial',
+        },
+        indicatorStyle:{
+          backgroundColor: '#1B445F',
+          height:2
+        }
 
-        buttonNeutral: "Ask Me Later",
-        buttonNegative: "Cancel",
-        buttonPositive: "OK"
-      }
-    );
-    if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-      console.log("Location permission denied, Please enable it in settings");
-    }
-  } catch (err) {
-    console.warn(err);
-  }
-};
-
-
-export class Home extends Component {
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      currentLongitude: 0.0,
-      currentLatitude: 0.0,
-      state: 'unknown',
-      city: 'unknown',
-      myCity: {
-        active: null,
-        confirmed: null,
-        deceased: null
-      }
-
-    }
-  }
-
-  async componentDidMount() {
-
-    const data = await fetchData(data)
-
-    locationPermission()
-
-    Geolocation.getCurrentPosition(
-      position => {
-        const currentLongitude = JSON.stringify(position.coords.longitude);
-        const currentLatitude = JSON.stringify(position.coords.latitude);
-        this.setState({ currentLatitude: currentLatitude, currentLongitude: currentLongitude });
-        Loc.reverse(this.state.currentLatitude, this.state.currentLongitude)  
-        .then(json => {
-          var address = json.address;
-          console.log(address.city, address.state);
-          if (typeof data === "object") {
-            var response = data.data;
-            var myState = response[address.state]
-            var myCity = myState["districtData"][address.city]
-            console.log(myCity)
-            this.setState({
-              city: address.city,
-              state: address.state,
-              myCity: {
-                active: myCity.active,
-                confirmed: myCity.confirmed,
-                deceased: myCity.deceased
-              }
-            })
-          }
-        })
-        .catch(error => console.warn(error));
-      },
-      error => alert(error.message),
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-    );
-  };
-
-  render() {
-    return (
-      <View>
-        <Appbar.Header>
-          <Appbar.Action icon="home" />
-          <Appbar.Content title="Home" />
-        </Appbar.Header>
-        <Text style={{fontSize:24, fontWeight:'bold'}}>
-        Location:  {this.state.city} {this.state.state}
-        </Text>
-        <Text style={{fontSize:24, fontWeight:'bold'}}>
-        Active Cases:  {this.state.myCity.active} 
-        </Text>
-        <Text style={{fontSize:24, fontWeight:'bold'}}>
-        Confirmed Cases:  {this.state.myCity.confirmed}
-        </Text>
-        <Text style={{fontSize:24, fontWeight:'bold'}}>
-        Deceased:  {this.state.myCity.deceased}
-        </Text>
-      </View>
-    )
-  }
-} 
+      }}>
+        <Tab.Screen name="Your City" component={Current} />
+        <Tab.Screen name="India " component={IndiaStat} />
+      </Tab.Navigator>
+    </NavigationContainer>
+  )
+}
 
 export default Home
