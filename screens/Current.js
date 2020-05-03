@@ -1,11 +1,10 @@
 import React, { Component } from 'react'
 import { View, Text, PermissionsAndroid, StyleSheet } from 'react-native'
 import Geolocation from 'react-native-geolocation-service';
-import Loc from 'react-native-locationiq';
-import { Button, Card, Title, Paragraph } from 'react-native-paper'
+import Loc from 'react-native-geocoding';
 import { fetchData } from '../src/api/StateData'
 
-Loc.init("12137dbd193f40"); //My locationIQ API Key
+Loc.init("Your API Here"); //My locationIQ API Key
 
 const locationPermission = async () => {
   try {
@@ -55,6 +54,9 @@ export class Current extends Component {
   async componentDidMount() {
 
     const data = await fetchData(data)
+    var response = data.data;
+    var d = Object.keys(response["Jammu and Kashmir"].districtData)
+
 
     locationPermission()
 
@@ -62,20 +64,59 @@ export class Current extends Component {
       position => {
         const currentLongitude = JSON.stringify(position.coords.longitude);
         const currentLatitude = JSON.stringify(position.coords.latitude);
+        // console.log(currentLatitude,currentLongitude)                //loging lat long
         this.setState({ currentLatitude: currentLatitude, currentLongitude: currentLongitude });
-        Loc.reverse(this.state.currentLatitude, this.state.currentLongitude)
+        Loc.from( this.state.currentLatitude , this.state.currentLongitude )
           .then(json => {
-            var address = json.address;
+            // console.log(json)                 //Address Object
+            const district = json.results[json.results.length-3].address_components[0].long_name
+            const state = json.results[json.results.length-3].address_components[1].long_name
+            console.log(district , state)
             if (typeof data === "object") {
-              var response = data.data;
-              var myState = response[address.state]
-              var myCity = myState["districtData"][address.city]
-              var delta = myCity["delta"]
-              console.log(address.city, address.state);              //loging location
-              console.log(myCity)                                    //loging data
+              //Jammu & Kashmir Data rules
+              if(d.includes(state)){
+                this.setState({
+                  city: state,
+                  state: 'Jammu and Kashmir'
+                })
+                var myState = response['Jammu and Kashmir']
+                var myCity = myState["districtData"][state]
+                var delta = myCity["delta"]
+              }
+              // Delhi Data rules
+              else if(state == 'Delhi'){
+                var delhiDistrict = json.results[json.results.length-4].address_components[0].long_name
+                this.setState({
+                  city: delhiDistrict,
+                  state: state
+                })
+                var myState = response['Delhi']
+                var myCity = myState["districtData"][delhiDistrict]
+                console.log(myCity)
+                var delta = myCity["delta"]
+              }
+              //Gautam Buddh Nagar to Gautam Buddha Nagar (mind that 'a' in buddha)
+              if(district == 'Gautam Buddh Nagar'){
+                this.setState({
+                  city: 'Gautam Buddha Nagar',
+                  state: state
+                })
+                var myState = response[state]
+                var myCity = myState["districtData"]['Gautam Buddha Nagar']
+                var delta = myCity["delta"]
+              }
+              else{
+                this.setState({
+                  city: district,
+                  state: state
+                })
+                var myState = response[state]
+                var myCity = myState["districtData"][district]
+                var delta = myCity["delta"]
+              }
+              // console.log(myCity)
+              // console.log(myCity)
               this.setState({
-                city: address.city,
-                state: address.state,
                 myCity: {
                   active: myCity.active,
                   confirmed: myCity.confirmed,
