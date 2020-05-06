@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, Dimensions } from 'react-native'
 import { fetchIndiaData } from '../src/api/StateData'
 import { updatelog} from '../src/api/StateData'
 import TimeAgo from 'react-native-timeago'
 
 
+
+const { width, height } = Dimensions.get('window');
 
 export class Current extends Component {
     constructor(props) {
@@ -25,6 +27,10 @@ export class Current extends Component {
                 timestamp: null
             },
             update2:{
+                log: '',
+                timestamp: null
+            },
+            update3: {
                 log: '',
                 timestamp: null
             }
@@ -57,6 +63,10 @@ export class Current extends Component {
                 update2:{
                     log:update[update.length-2].update,
                     timestamp: (update[update.length-2].timestamp * 1000)
+                },
+                update3: {
+                    log:update[update.length-3].update,
+                    timestamp: (update[update.length-3].timestamp * 1000)
                 }
                 
             })
@@ -95,12 +105,16 @@ export class Current extends Component {
                 </View>
                 <View style={{marginVertical:5,}}>
                     <View style={styles.log}>
-                        <Text>{this.state.update.log}</Text>
+                        <Text style={styles.log}>{this.state.update.log}</Text>
                         <Text style={styles.timestamp}>Updated <TimeAgo time={this.state.update.timestamp} /></Text>
                     </View>
                     <View style={styles.log}>
                         <Text style={styles.log}>{this.state.update2.log}</Text>
                         <Text style={styles.timestamp}>Updated <TimeAgo time={this.state.update2.timestamp} /></Text>
+                    </View>
+                    <View style={styles.log}>
+                        <Text style={styles.log}>{this.state.update3.log}</Text>
+                        <Text style={styles.timestamp}>Updated <TimeAgo time={this.state.update3.timestamp} /></Text>
                     </View>
                 </View>
             </View>
@@ -157,8 +171,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         marginVertical:2,
         paddingVertical:3,
-        paddingHorizontal:8,
+        paddingHorizontal:10,
         borderRadius: 10,
+        width: width
     },
     timestamp:{
         color: '#aaaaaa',

@@ -23,8 +23,6 @@
     "react-native-geocoding": "^0.4.0",
     "react-native-geolocation-service": "^4.0.0",
     "react-native-gesture-handler": "^1.6.1",
-    "react-native-locationiq": "^0.1.0",
-    "react-native-looped-carousel": "^0.1.13",
     "react-native-paper": "^3.8.0",
     "react-native-reanimated": "^1.8.0",
     "react-native-safe-area-context": "^0.7.3",
