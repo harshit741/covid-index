@@ -4,7 +4,7 @@ import Geolocation from 'react-native-geolocation-service';
 import Loc from 'react-native-geocoding';
 import { fetchData } from '../src/api/StateData'
 
-Loc.init("AIzaSyBEiSeIRZirryTrFePQSBKJ0X7iQ2ynuQM"); //My locationIQ API Key
+Loc.init("api key"); //My locationIQ API Key
 
 const locationPermission = async () => {
   try {
